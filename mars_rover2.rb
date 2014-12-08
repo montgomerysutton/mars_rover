@@ -16,37 +16,31 @@ class Rover
     
 	def advance_rover
 		#move the rover forward one point in the proper direction
-		if ( @cardinal === "N" ) && ( @y < @max_y )
+		if ( @cardinal == "N" ) and ( @y < @max_y )
 			@y = @y + 1
 		end
 
-		if ( @cardinal === "E" ) && ( @x < @max_x )
+		if ( @cardinal == "E" ) and ( @x < @max_x )
 			@x = @x + 1
 		end
 
-		if ( @cardinal === "S" ) && ( @y > 0 )
+		if ( @cardinal == "S" ) and ( @y > 0 )
 			@y = @y - 1
 		end
 
-		if ( @cardinal === "W" ) && ( @x > 0 )
+		if ( @cardinal == "W" ) and ( @x > 0 )
 			@x = @x - 1
 		end
 	end
 	
 	def rotate( direction )
-		if ( @cardinal === "N" && direction === "right") || ( @cardinal === "S" && direction === "left")
+		if ( @cardinal == "N" and direction == "R") or ( @cardinal == "S" and direction == "L")
 			@cardinal="E"
-		end
-
-		if ( @cardinal === "E" && direction === "right") || ( @cardinal === "W" && direction === "left")
+		elsif ( @cardinal == "E" and direction == "R") or ( @cardinal == "W" and direction == "L")
 			@cardinal="S"
-		end
-		
-		if ( @cardinal === "S" && direction === "right") || ( @cardinal === "N" && direction === "left")
+		elsif ( @cardinal == "S" and direction == "R") or ( @cardinal == "N" and direction == "L")
 			@cardinal="W"
-		end
-		
-		if ( @cardinal === "W" && direction === "right") || ( @cardinal === "E" && direction === "left")
+		elsif ( @cardinal == "W" and direction == "R") or ( @cardinal == "E" and direction == "L")
 			@cardinal="N"
 		end
 	end
@@ -56,9 +50,9 @@ class Rover
 		@navigation_instructions.each do |instruction|
 			case instruction
 			when "L"
-				self.rotate(left)
+				self.rotate("L")
 			when "R"
-				self.rotate(right)
+				self.rotate("R")
 			when "M"
 				self.advance_rover
 			else
@@ -73,17 +67,33 @@ class Rover
 
 end
 
+# Set Starting Rover Number
+rover_number = 1
+rovers = Array.new
 
 # get initial values from the user
 puts "Max Coordinates of the plain (x [space] y):"
 max_coordinates = gets.chomp
-puts "Initial Rover Coordinates:"
-initial_position = gets.chomp
-puts "Rover Instructions:"
-navigation_instructions = gets.chomp
 
-# create a new Meal instance
-this_rover = Rover.new(max_coordinates, initial_position, navigation_instructions)
+loop do
+	puts "Initial Rover Coordinates (x [space] y [space] N, S, E, or W):"
+	initial_position = gets.chomp
 
-this_rover.move_rover
-this_rover.output_position
+	puts "Rover Instructions (L for left, R for right, M for move forward one spot - no spaces!):"
+	navigation_instructions = gets.chomp
+
+	# create a new Rover instance
+	rovers.push( Rover.new(max_coordinates, initial_position, navigation_instructions) )
+
+	puts "Create additional Rover? (Y/N)"
+	additional_rover = gets.chomp
+
+	rover_number += 1
+
+	break if additional_rover == "N"
+end
+
+rovers.each do |rover|
+	rover.move_rover
+	rover.output_position
+end
